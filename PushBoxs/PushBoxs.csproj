@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{525D62CA-19C7-4DF6-879B-677A9066CA86}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>PushBoxs</RootNamespace>
+    <AssemblyName>PushBoxs</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form3.Designer.cs">
+      <DependentUpon>Form3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form4.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form4.Designer.cs">
+      <DependentUpon>Form4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form5.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form5.Designer.cs">
+      <DependentUpon>Form5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form6.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form6.Designer.cs">
+      <DependentUpon>Form6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form3.resx">
+      <DependentUpon>Form3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form4.resx">
+      <DependentUpon>Form4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form5.resx">
+      <DependentUpon>Form5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form6.resx">
+      <DependentUpon>Form6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\Box\BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceEight-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceEight-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceFive-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceFive-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceFour-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceFour-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceOne-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceOne-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceSeven-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceSeven-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceSix-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceSix-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceThree-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceThree-BoxOne-2.png" />
+    <Content Include="images\Box\BoxOne\SurfaceTwo-BoxOne-1.png" />
+    <Content Include="images\Box\BoxOne\SurfaceTwo-BoxOne-2.png" />
+    <Content Include="images\Box\BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceEight-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceEight-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceFive-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceFive-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceFour-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceFour-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceOne-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceOne-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceSeven-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceSeven-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceSix-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceSix-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceThree-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceThree-BoxThree-2.png" />
+    <Content Include="images\Box\BoxThree\SurfaceTwo-BoxThree-1.png" />
+    <Content Include="images\Box\BoxThree\SurfaceTwo-BoxThree-2.png" />
+    <Content Include="images\Box\BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceEight-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceEight-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceFive-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceFive-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceFour-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceFour-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceOne-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceOne-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceSeven-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceSeven-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceSix-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceSix-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceThree-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceThree-BoxTwo-2.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceTwo-BoxTwo-1.png" />
+    <Content Include="images\Box\BoxTwo\SurfaceTwo-BoxTwo-2.png" />
+    <Content Include="images\Character\DownOne.png" />
+    <Content Include="images\Character\DownTwo.png" />
+    <Content Include="images\Character\Down\Down.gif" />
+    <Content Include="images\Character\Down\SurfaceEight-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceFive-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceFour-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceOne-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceSeven-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceSix-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceThree-Down.gif" />
+    <Content Include="images\Character\Down\SurfaceTwo-Down.gif" />
+    <Content Include="images\Character\LeftOne.png" />
+    <Content Include="images\Character\LeftTwo.png" />
+    <Content Include="images\Character\Left\Left.gif" />
+    <Content Include="images\Character\Left\SurfaceEight-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceFive-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceFour-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceOne-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceSeven-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceSix-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceThree-Left.gif" />
+    <Content Include="images\Character\Left\SurfaceTwo-Left.gif" />
+    <Content Include="images\Character\RightOne.png" />
+    <Content Include="images\Character\RightTwo.png" />
+    <Content Include="images\Character\Right\Right.gif" />
+    <Content Include="images\Character\Right\SurfaceEight-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceFive-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceFour-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceOne-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceSeven-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceSix-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceThree-Right.gif" />
+    <Content Include="images\Character\Right\SurfaceTwo-Right.gif" />
+    <Content Include="images\Character\UpOne.png" />
+    <Content Include="images\Character\UpTwo.png" />
+    <Content Include="images\Character\Up\SurfaceEight-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceFive-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceFour-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceOne-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceSeven-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceSix-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceThree-Up.gif" />
+    <Content Include="images\Character\Up\SurfaceTwo-Up.gif" />
+    <Content Include="images\Character\Up\Up.gif" />
+    <Content Include="images\End\end.png" />
+    <Content Include="images\End\EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceEight-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceFive-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceFour-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceOne-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceSeven-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceSix-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceThree-EndBeige.png" />
+    <Content Include="images\End\EndBeige\SurfaceTwo-EndBeige.png" />
+    <Content Include="images\End\EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceEight-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceFive-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceFour-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceOne-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceSeven-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceSix-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceThree-EndBlack.png" />
+    <Content Include="images\End\EndBlack\SurfaceTwo-EndBlack.png" />
+    <Content Include="images\End\EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceEight-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceFive-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceFour-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceOne-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceSeven-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceSix-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceThree-EndBlue.png" />
+    <Content Include="images\End\EndBlue\SurfaceTwo-EndBlue.png" />
+    <Content Include="images\End\EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceEight-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceFive-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceFour-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceOne-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceSeven-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceSix-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceThree-EndBrown.png" />
+    <Content Include="images\End\EndBrown\SurfaceTwo-EndBrown.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Beige.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Black.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Blue.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Brown.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Gray.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Purple.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Red.png" />
+    <Content Include="images\End\EndCharacter\EndCharacter-Yellow.png" />
+    <Content Include="images\End\EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceEight-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceFive-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceFour-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceOne-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceSeven-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceSix-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceThree-EndGray.png" />
+    <Content Include="images\End\EndGray\SurfaceTwo-EndGray.png" />
+    <Content Include="images\End\EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceEight-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceFive-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceFour-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceOne-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceSeven-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceSix-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceThree-EndPurple.png" />
+    <Content Include="images\End\EndPurple\SurfaceTwo-EndPurple.png" />
+    <Content Include="images\End\EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceEight-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceFive-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceFour-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceOne-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceSeven-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceSix-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceThree-EndRed.png" />
+    <Content Include="images\End\EndRed\SurfaceTwo-EndRed.png" />
+    <Content Include="images\End\EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceEight-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceFive-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceFour-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceOne-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceSeven-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceSix-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceThree-EndYellow.png" />
+    <Content Include="images\End\EndYellow\SurfaceTwo-EndYellow.png" />
+    <Content Include="images\Character\EndCharacter.png" />
+    <Content Include="images\error.ico" />
+    <Content Include="images\Naruto.jpg" />
+    <Content Include="images\right.ico" />
+    <Content Include="images\Surface\SurfaceEight.png" />
+    <Content Include="images\Surface\SurfaceFive.png" />
+    <Content Include="images\Surface\SurfaceFour.png" />
+    <Content Include="images\Surface\SurfaceOne.png" />
+    <Content Include="images\Surface\SurfaceSeven.png" />
+    <Content Include="images\Surface\SurfaceSix.png" />
+    <Content Include="images\Surface\SurfaceThree.png" />
+    <Content Include="images\Surface\SurfaceTwo.png" />
+    <Content Include="images\Wall\WallFour.png" />
+    <Content Include="images\Wall\WallOne.png" />
+    <Content Include="images\Wall\WallThree.png" />
+    <Content Include="images\Wall\WallTwo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

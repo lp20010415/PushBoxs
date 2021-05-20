@@ -1,0 +1,15 @@
+E:\Visuo studio workspace\PushBoxs\bin\Debug\PushBoxs.exe.config
+E:\Visuo studio workspace\PushBoxs\bin\Debug\PushBoxs.exe
+E:\Visuo studio workspace\PushBoxs\bin\Debug\PushBoxs.pdb
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Form1.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Properties.Resources.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.csproj.GenerateResource.cache
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.csproj.CoreCompileInputs.cache
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.exe
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.pdb
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.csprojAssemblyReference.cache
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Form2.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Form3.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Form4.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.Form5.resources
+E:\Visuo studio workspace\PushBoxs\obj\Debug\PushBoxs.FormSc.resources
