@@ -14,7 +14,7 @@ namespace PushBoxs
 {
     public partial class Form4 : Form
     {
-        int c = 0;
+        Boolean CheckPassword,CheckAgainPassword = false;
         public Form4()
         {
             InitializeComponent();
@@ -50,22 +50,25 @@ namespace PushBoxs
                 reader.Close();
                 if (check)
                 {
-                    if (c != 0)
+                    if (CheckPassword && CheckAgainPassword)
                     {
                         comm.CommandText = "update UserData set password='" + textBox3.Text + "' where account=" + textBox1.Text;
                         int check_sql = comm.ExecuteNonQuery();
                         if (check_sql > 0)
                         {
-                            MessageBox.Show("密码修改成功！", "提示");
                             textBox1.Clear();
                             textBox2.Clear();
                             textBox3.Clear();
+                            textBox4.Clear();
+                            CheckPassword = false;
+                            CheckAgainPassword = false;
                             error.Clear();
+                            MessageBox.Show("密码修改成功！", "提示");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("请输入密码", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("存在错误，请检查", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                 }
@@ -100,7 +103,7 @@ namespace PushBoxs
             {
                 error.Icon = new Icon(@"..\..\images\right.ico");
                 error.SetError(textBox3, "输入正确！");
-                c = 1;
+                CheckPassword = true;
             }
         }
 
@@ -139,6 +142,21 @@ namespace PushBoxs
                     tip.SetToolTip(textBox3, "密码强度:高"); break;
                 case 4:
                     tip.SetToolTip(textBox3, "密码强度:强"); break;
+            }
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            if(textBox4.Text == textBox3.Text)
+            {
+                error.Icon = new Icon(@"..\..\images\right.ico");
+                error.SetError(textBox4, "输入正确！");
+                CheckAgainPassword = true;
+            }
+            else
+            {
+                error.Icon = new Icon(@"..\..\images\error.ico");
+                error.SetError(textBox4, "不匹配！");
             }
         }
     }
