@@ -232,6 +232,5 @@ namespace PushBoxs
             Form2.enabled = true;
             Form2.change();
         }
-
     }
 }

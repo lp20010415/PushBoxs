@@ -14,23 +14,26 @@ namespace PushBoxs
 {
     public partial class Form4 : Form
     {
-        Boolean CheckPassword,CheckAgainPassword = false;
+        bool CheckPassword,CheckAgainPassword = false;
         public Form4()
         {
             InitializeComponent();
         }
 
+        //校验码文本提示
         private void label2_MouseEnter(object sender, EventArgs e)
         {
             tip.SetToolTip(label2, "注册时设置的");
         }
 
+        //窗口关闭事件
         private void Form4_FormClosed(object sender, FormClosedEventArgs e)
         {
             Form2.enabled = true;
             Form2.change();
         }
 
+        //"确定"按钮事件
         private void button1_Click(object sender, EventArgs e)
         {
             bool check = false;
@@ -84,6 +87,7 @@ namespace PushBoxs
             }
         }
 
+        //"新密码"输入框改变事件
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             error.Clear();
@@ -107,6 +111,7 @@ namespace PushBoxs
             }
         }
 
+        //"新密码"输入框提示事件
         private void textBox3_MouseEnter(object sender, EventArgs e)
         {
             tip.Active = true;
@@ -145,6 +150,7 @@ namespace PushBoxs
             }
         }
 
+        //"再次输入密码"输入框改变事件
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
             if(textBox4.Text == textBox3.Text)

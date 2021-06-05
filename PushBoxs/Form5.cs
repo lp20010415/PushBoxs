@@ -77,6 +77,7 @@ namespace PushBoxs
             fm.SetBounds(0, 0, 240, 170);
             fm.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             fm.TopMost = true;
+            fm.FormClosing += Fm_FormClosing;
             fm.Show();
 
             //获取Surface
@@ -102,21 +103,34 @@ namespace PushBoxs
             pictureBox3.BringToFront();
         }
 
-        //按钮提示
+        //关闭选择地面界面-未选择地面
+        private void Fm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            switch (e.CloseReason)
+            {
+                case CloseReason.UserClosing:
+                    this.Dispose();
+                    Form1.enabled = true;
+                    Form1.change();
+                    break;
+            }
+        }
+
+        //"保存"按钮提示
         private void button2_MouseEnter(object sender, EventArgs e)
         {
             Tip.Active = true;
             Tip.SetToolTip(button2, "仅保存，不能玩");
         }
 
-        //按钮提示
+        //"完成制作"按钮提示
         private void button3_MouseEnter(object sender, EventArgs e)
         {
             Tip.Active = true;
             Tip.SetToolTip(button3, "地图能玩");
         }
 
-        //按钮事件
+        //"查看已做的地图"按钮事件
         private void button_Click(object sender, EventArgs e)
         {
             //显示选项卡及隐藏面板
@@ -131,7 +145,7 @@ namespace PushBoxs
             panel4.Hide();
             panel5.Hide();
             bool checkBlock = false;//检测地图是否箱子、终点、人物各一个。
-            if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)(?=.*[H-O].*)+"))
+            if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)+") || Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*[H-O].*)+"))
                 checkBlock = true;
             else
                 MessageBox.Show("箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -250,7 +264,7 @@ namespace PushBoxs
             }
         }
 
-        //加载数据
+        //地面选择后加载数据
         private void Fmp_MouseDown(object sender, MouseEventArgs e)
         {
             string pattern = "..\\..\\images\\Surface\\";
@@ -401,8 +415,7 @@ namespace PushBoxs
                 code = "S8";
             getUrl = get;
             DefaultMapModel();
-            fm.Close();
-
+            fm.Dispose();
         }
 
         //移动操作
@@ -491,35 +504,36 @@ namespace PushBoxs
                 //pictureBox3.Location = new Point(i, j);
             }
         }
-        
+
         //是否保存-显示玩的界面
         private void Form5_FormClosing(object sender, FormClosingEventArgs e)
         {
-            bool checkBlock = false;//检测地图是否箱子、终点、人物各一个。
-            if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)(?=.*[H-O].*)+"))
-                checkBlock = true;
-            else
-                MessageBox.Show("箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            if (checkBlock)
+            if (MessageBox.Show("是否保存?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                string check = label8.Text.Replace("当前地图名称:", "");
-                if (FormSc.check == 0)
+                bool checkBlock = false;//检测地图是否箱子、终点、人物各一个。
+                if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)+") || Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*[H-O].*)+"))
+                    checkBlock = true;
+                else
+                    MessageBox.Show("箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (checkBlock)
                 {
-                    if (check == "")//无地图名称-需在地图数据后面加上"Save"
+                    string check = label8.Text.Replace("当前地图名称:", "");
+                    if (FormSc.check == 0)
                     {
-                        Form sc = new FormSc();
-                        sc.Text = "保存-关闭窗口";
-                        sc.SetBounds(500, 500, 210, 135);
-                        sc.AutoScroll = false;
-                        sc.Show();
-                        FormSc.LoginName = LoginName;
-                        FormSc.MapCode = MapCode + "Save";
-                        FormSc.chooseSurface = chooseSurface;
-                        FormSc.check += 2;
-                    }
-                    else//有地图名称
-                    {
-                        if (MessageBox.Show("是否保存?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                        if (check == "")//无地图名称-需在地图数据后面加上"Save"
+                        {
+                            Form sc = new FormSc();
+                            sc.Text = "保存-关闭窗口";
+                            sc.SetBounds(500, 500, 210, 135);
+                            sc.AutoScroll = false;
+                            sc.Show();
+                            FormSc.LoginName = LoginName;
+                            FormSc.MapCode = MapCode + "Save";
+                            FormSc.chooseSurface = chooseSurface;
+                            FormSc.check += 2;
+                        }
+                        else//有地图名称
                         {
                             try
                             {
@@ -536,19 +550,25 @@ namespace PushBoxs
                             {
                                 MessageBox.Show("出错原因:" + ex.Message, "保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
+                            Form1.enabled = true;
+                            Form1.change();
                         }
                     }
+                    switch (e.CloseReason)
+                    {
+                        case CloseReason.UserClosing:
+                            e.Cancel = true;
+                            break;
+                    }
+                    Enabled = false;
                 }
-
-                Console.WriteLine(e.CloseReason);
-                switch (e.CloseReason)
-                {
-                    case CloseReason.UserClosing:
-                        e.Cancel = true;
-                        break;
-                }
-                Enabled = false;
             }
+            else
+            {
+                Form1.enabled = true;
+                Form1.change();
+            }
+            
         }
 
         //绘制地图相关操作
@@ -841,6 +861,7 @@ namespace PushBoxs
                     //终点
                     else if (Regex.IsMatch(FileUrl, "(End)+"))
                     {
+                        Console.WriteLine("Hello World");
                         switch (Map[jX, jY])//判断该项是否为人物
                         {
                             case "C1"://上
@@ -1130,7 +1151,7 @@ namespace PushBoxs
                     break;
             }
         }
-        
+
         //获取终点代码
         private string GetEndCode(string check, string code)
         {
@@ -1421,13 +1442,13 @@ namespace PushBoxs
         {
             label8.Text = "当前地图名称:" + LabelName;
         }
-        
+
         //委托-关闭窗口
         public void CloseForm()
         {
             Dispose();
         }
-        
+
         //使按钮不会被获取到按键焦点
         private void SetGetFocus(Control c)
         {
