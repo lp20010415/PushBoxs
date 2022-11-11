@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -62,6 +63,10 @@ namespace PushBoxs
                 conn.Close();
                 sqlreader.Close();
             }
+            catch (MySqlException e1)
+            {
+                MessageBox.Show("您可能没有联网！可以考虑游玩离线模式！");
+            }
             catch(Exception ex)
             {
                 MessageBox.Show("出错原因:"+ex.Message);
@@ -96,6 +101,18 @@ namespace PushBoxs
         {
             if (e.KeyCode == Keys.Enter)
                 button1_Click(button1, e);
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("是否进入离线模式？(有些功能无法使用)", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+            {
+
+                Form1.enabled = true;
+                Form1.change();
+                Close();
+                Form1.enterOfflineMode();
+            }
         }
     }
 }

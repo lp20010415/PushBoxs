@@ -95,17 +95,17 @@ namespace PushBoxs
             error.SetIconPadding(textBox3, 3);
             if (textBox3.Text.Length < 6)
             {
-                error.Icon = new Icon(@"..\..\images\error.ico");
+                error.Icon = new Icon(@".\images\error.ico");
                 error.SetError(textBox3, "至少六位密码");
             }
             else if (textBox3.Text.Length > 16)
             {
-                error.Icon = new Icon(@"..\..\images\error.ico");
+                error.Icon = new Icon(@".\images\error.ico");
                 error.SetError(textBox3, "密码最多16位");
             }
             else
             {
-                error.Icon = new Icon(@"..\..\images\right.ico");
+                error.Icon = new Icon(@".\images\right.ico");
                 error.SetError(textBox3, "输入正确！");
                 CheckPassword = true;
             }
@@ -155,13 +155,13 @@ namespace PushBoxs
         {
             if(textBox4.Text == textBox3.Text)
             {
-                error.Icon = new Icon(@"..\..\images\right.ico");
+                error.Icon = new Icon(@".\images\right.ico");
                 error.SetError(textBox4, "输入正确！");
                 CheckAgainPassword = true;
             }
             else
             {
-                error.Icon = new Icon(@"..\..\images\error.ico");
+                error.Icon = new Icon(@".\images\error.ico");
                 error.SetError(textBox4, "不匹配！");
             }
         }

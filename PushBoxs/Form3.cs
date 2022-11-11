@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,7 @@ namespace PushBoxs
     public partial class Form3 : Form
     {
         int c1, c2, c3, c4 = 0;
+        private string sqltext = "Server=1.117.74.238;port=3306;DataBase=c#Match_Data;user=root;password=SJMRLp0@0";
         public Form3()
         {
             InitializeComponent();
@@ -37,16 +39,20 @@ namespace PushBoxs
         //注册
         private void button1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("c1:"+c1+"c2:"+ c2 +"c3:"+ c3 +"c4:"+ c4);
-            String sqltext = "Server=.;database=c#Traning report;uid=sa;pwd=123456";
+
             try
             {
+
                 if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1)
-                {   
-                    SqlConnection conn = new SqlConnection(sqltext);
+                {
+                    MySqlConnection conn = new MySqlConnection(sqltext);
                     conn.Open();
-                    SqlCommand comm = conn.CreateCommand();
-                    comm.CommandText = "insert into UserData values ('"+textBox1.Text+"','"+textBox2.Text+"','"+textBox3.Text+ "');"+ "create table MapData.MapData_" + textBox1.Text + "(Name varchar(255), MapData varchar(2555), Surface varchar(255))";
+                    MySqlCommand comm = conn.CreateCommand();
+                    comm.CommandText = "insert into UserData values ('" + textBox1.Text + "','" + textBox2.Text + "','" + textBox3.Text + "')";
+                    //SqlConnection conn = new SqlConnection("Server=.;database=c#Traning report;uid=sa;pwd=123456");
+                    //conn.Open();
+                    //SqlCommand comm = conn.CreateCommand();
+                    //comm.CommandText = "insert into UserData values ('"+textBox1.Text+"','"+textBox2.Text+"','"+textBox3.Text+ "');"+ "create table MapData.MapData_" + textBox1.Text + "(Name varchar(255), MapData varchar(2555), Surface varchar(255))";
 
                     int check = comm.ExecuteNonQuery();
                     if (check > 0)
@@ -135,25 +141,25 @@ namespace PushBoxs
                 int i = textBox4.Text.Length;
                 if (i >= 0 && i < 6)
                 {
-                    error4.Icon = new Icon(@"..\..\images\error.ico");
+                    error4.Icon = new Icon(@".\images\error.ico");
                     error4.SetError(textBox4, "请输入6位数字!");
 
                 }
                 else if (i > 6)
                 {
-                    error4.Icon = new Icon(@"..\..\images\error.ico");
+                    error4.Icon = new Icon(@".\images\error.ico");
                     error4.SetError(textBox4, "请输入6位数字!");
                 }
                 else
                 {
-                    error4.Icon = new Icon(@"..\..\images\right.ico");
+                    error4.Icon = new Icon(@".\images\right.ico");
                     error4.SetError(textBox4, "输入正确！");
                     c4 = 1;
                 }
             }
             else
             {
-                error4.Icon = new Icon(@"..\..\images\error.ico");
+                error4.Icon = new Icon(@".\images\error.ico");
                 error4.SetError(textBox4, "请输入6位数字!");
             }
             
@@ -167,12 +173,12 @@ namespace PushBoxs
             error3.SetIconAlignment(textBox3, ErrorIconAlignment.MiddleRight);
             if (textBox3.Text != textBox2.Text)
             {
-                error3.Icon = new Icon(@"..\..\images\error.ico");
+                error3.Icon = new Icon(@".\images\error.ico");
                 error3.SetError(textBox3, "不匹配！");
             }
             else
             {
-                error3.Icon = new Icon(@"..\..\images\right.ico");
+                error3.Icon = new Icon(@".\images\right.ico");
                 error3.SetError(textBox3, "输入正确！");
                 c3 = 1;
             }
@@ -186,17 +192,17 @@ namespace PushBoxs
             error2.SetIconPadding(textBox2, 3);
             if (textBox2.Text.Length < 6)
             {
-                error2.Icon = new Icon(@"..\..\images\error.ico");
+                error2.Icon = new Icon(@".\images\error.ico");
                 error2.SetError(textBox2, "至少六位密码");
             }
             else if (textBox2.Text.Length > 16)
             {
-                error2.Icon = new Icon(@"..\..\images\error.ico");
+                error2.Icon = new Icon(@".\images\error.ico");
                 error2.SetError(textBox2, "密码最多16位");
             }
             else
             {
-                error2.Icon = new Icon(@"..\..\images\right.ico");
+                error2.Icon = new Icon(@".\images\right.ico");
                 error2.SetError(textBox2, "输入正确！");
                 c2 = 1;
             }
@@ -208,19 +214,45 @@ namespace PushBoxs
             error1.Clear();
             error1.SetIconPadding(textBox1, 3);
             error1.SetIconAlignment(textBox1, ErrorIconAlignment.MiddleRight);
+
+
+            // 检测账号是否已注册
+            string get_account = textBox1.Text;
+            Boolean isExist = false;
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(sqltext);
+                conn.Open();
+                MySqlCommand comm = conn.CreateCommand();
+                comm.CommandText = "select count(*) from UserData where account = '" + get_account + "'";
+                if (Convert.ToInt32(comm.ExecuteScalar()) > 0)
+                {
+                    isExist = true;
+                }
+                conn.Close();
+
+            } catch (Exception ex)
+            {
+                MessageBox.Show("报错原因:" + ex.Message);
+            }
+
             if (Regex.IsMatch(textBox1.Text, "[ ]"))
             {
-                error1.Icon = new Icon(@"..\..\images\error.ico");
+                error1.Icon = new Icon(@".\images\error.ico");
                 error1.SetError(textBox1, "存在空格！");
             }
             else if (textBox1.Text.Length > 10)
             {
-                error1.Icon = new Icon(@"..\..\images\error.ico");
+                error1.Icon = new Icon(@".\images\error.ico");
                 error1.SetError(textBox1, "账号最多十位！");
+            } else if (isExist)
+            {
+                error1.Icon = new Icon(@".\images\error.ico");
+                error1.SetError(textBox1, "账号已注册！");
             }
             else
             {
-                error1.Icon = new Icon(@"..\..\images\right.ico");
+                error1.Icon = new Icon(@".\images\right.ico");
                 error1.SetError(textBox1, "输入正确！");
                 c1 = 1;
             }

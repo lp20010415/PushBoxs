@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,21 +16,24 @@ using System.Windows.Forms;
 
 namespace PushBoxs
 {
-    public delegate void DrawDoneMap();//委托-画已做的地图
-    public delegate void ChangeLabelName();//委托-改变"当前地图名称"
-    public delegate void RecoverMapModel();//委托-恢复默认绘制地图模板
-    public delegate void ShutdownForm();//委托-关闭窗口
+    public delegate void DrawDoneMap();         //委托-画已做的地图
+    public delegate void ChangeLabelName();     //委托-改变"当前地图名称"
+    public delegate void RecoverMapModel();     //委托-恢复默认绘制地图模板
+    public delegate void ShutdownForm();        //委托-关闭窗口
+    public delegate void comboBox2EnabledA();   //委托-改变combox2是否enabled
     public partial class Form5 : Form
     {
-        private string code = "";//地面代码
-        private string getUrl = "";//获取图片地址
-        private bool CheckSave = false;//检测是否保存
-        private string chooseSurface = "";//选择的地面
-        private int x, y, x1, y1, x2, y2;//全局变量-pictureBox的位置
-        private bool CheckClick = false;//picture移动
-        private int fmpX = 5, fmpY = 10;//选择地面界面选项位置
-        private int ImagesNumX = 0, ImagesNumY = 0;//pictureBox的位置
-        public string LoginName = "";//登录名
+        private string code = "";                   //地面代码
+        private string getUrl = "";                 //获取图片地址
+        private bool CheckSave = false;             //检测是否保存
+        private string chooseSurface = "";          //选择的地面
+        private int x, y, x1, y1, x2, y2;           //全局变量-pictureBox的位置
+        private bool CheckClick = false;            //picture移动
+        private int fmpX = 5, fmpY = 10;            //选择地面界面选项位置
+        private int ImagesNumX = 0, ImagesNumY = 0; //pictureBox的位置
+        public string LoginName = "";               //登录名
+        // MySql登录信息
+        private string sqltext = "Server=1.117.74.238;port=3306;DataBase=c#Match_Data;user=root;password=SJMRLp0@0";
 
         //控件
         private PictureBox p;//主界面-显示图片
@@ -37,18 +41,21 @@ namespace PushBoxs
         private Form fm;//选择地面界面
 
         //画地图定义
-        public static string LabelName = "";//改变"当前地图名称"
-        private Bitmap bmp;//绘制地图所需
-        private Graphics g;//绘制地图所需
-        private Bitmap bitmap;//绘制地图所需
-        public static string[,] Map = new string[15, 15];//载入地图-地图数据
-        public static string MapSurface = "";//载入地图-地面数据
-        private string MapCode = "";//地图数据
+        public static string LabelName = "";                //改变"当前地图名称"
+        private Bitmap bmp;                                 //绘制地图所需
+        private Graphics g;                                 //绘制地图所需
+        private Bitmap bitmap;                              //绘制地图所需
+        public static string[,] Map = new string[15, 15];   //载入地图-地图数据
+        public static string MapSurface = "";               //载入地图-地面数据
+        public static int mapId = 0;                        // 载入地图-地图id
+        private string MapCode = "";                        //地图数据
+        public static Boolean comboBox2IsEnabled = false;   // comboBox2的enabled
 
         public static DrawDoneMap ddm;//委托-画已做的地图
         public static ChangeLabelName cln;//委托-改变"当前地图名称"
         public static RecoverMapModel rmm;//委托-恢复默认绘制地图模板
         public static ShutdownForm sf;//委托-关闭窗口
+        public static comboBox2EnabledA comboBox2Enabled;       //委托-改变combox2是否enabled
         public Form5()
         {
             InitializeComponent();
@@ -60,10 +67,11 @@ namespace PushBoxs
             SetGetFocus(comboBox4);
             SetGetFocus(comboBox5);
 
-            ddm = new DrawDoneMap(DrawDMap);//委托-画已做的地图
-            cln = new ChangeLabelName(ChangeLName);//委托-改变"当前地图名称"
-            rmm = new RecoverMapModel(DefaultMapModel);//委托-恢复默认绘制地图模板
-            sf = new ShutdownForm(CloseForm);//委托-关闭窗口
+            ddm = new DrawDoneMap(DrawDMap);                                    //委托-画已做的地图
+            cln = new ChangeLabelName(ChangeLName);                             //委托-改变"当前地图名称"
+            rmm = new RecoverMapModel(DefaultMapModel);                         //委托-恢复默认绘制地图模板
+            sf = new ShutdownForm(CloseForm);                                   //委托-关闭窗口
+            comboBox2Enabled = new comboBox2EnabledA(changeComboBox2Enabled);   //委托-改变combox2是否enabled
             //获取登录账号
             label7.Text += LoginName;
 
@@ -81,7 +89,7 @@ namespace PushBoxs
             fm.Show();
 
             //获取Surface
-            string SurfacePath = @"..\..\images\Surface\";
+            string SurfacePath = @".\images\Surface\";
             DirectoryInfo getSurface = new DirectoryInfo(SurfacePath);
             foreach (FileInfo f in getSurface.GetFiles())
             {
@@ -146,8 +154,17 @@ namespace PushBoxs
             panel5.Hide();
             bool checkBlock = false;//检测地图是否箱子、终点、人物各一个。
             if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)+") || Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*[H-O].*)+"))
-                checkBlock = true;
-            else
+            {
+                int box_num = Regex.Matches(MapCode, "[B]+").Count;
+                int end_num = Regex.Matches(MapCode, "[E]+").Count;
+                if (box_num == end_num)
+                {
+                    checkBlock = true;
+                } else
+                {
+                    MessageBox.Show("箱子和终点数量不对等", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            } else if (((Button)sender).Text != "查看已做的地图")
                 MessageBox.Show("箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             //开始事件
             switch (((Button)sender).Text)
@@ -172,7 +189,7 @@ namespace PushBoxs
                         if (FormSc.check == 0)
                         {
                             string check = label8.Text.Replace("当前地图名称:", "");
-                            if (check == "")//无地图名称-需在地图数据后面加上"Save"
+                            if (check == "")    //无地图名称-需在地图数据后面加上"Save"
                             {
                                 FormSc.LoginName = LoginName;
                                 FormSc.MapCode = MapCode + "Save";
@@ -190,10 +207,17 @@ namespace PushBoxs
                                 {
                                     try
                                     {
-                                        SqlConnection conn = new SqlConnection("Server=.;DataBase=c#Traning report;uid=sa;pwd=123456");
+                                        MySqlConnection conn = new MySqlConnection(sqltext);
                                         conn.Open();
-                                        SqlCommand comm = conn.CreateCommand();
-                                        comm.CommandText = "Update MapData.MapData_" + LoginName + "set MapData='" + MapCode + "' where Name='" + check + "'";
+                                        MySqlCommand comm = conn.CreateCommand();
+                                        comm.CommandText = "update UserMapData set map_data = '" + MapCode + "' where id = " + mapId;
+                                        //comm.CommandText = "Insert into UserMapData(user_name, map_name, map_data) values('" + LoginName + "', '" + check + "', '" + MapCode + "')";
+
+                                        //SqlConnection conn = new SqlConnection("Server=.;DataBase=c#Traning report;uid=sa;pwd=123456");
+                                        //conn.Open();
+                                        //SqlCommand comm = conn.CreateCommand();
+                                        //comm.CommandText = "Update MapData.MapData_" + LoginName + "set MapData='" + MapCode + "' where Name='" + check + "'";
+
                                         int checks = comm.ExecuteNonQuery();
                                         if (checks > 0)
                                             MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK);
@@ -233,22 +257,29 @@ namespace PushBoxs
                                 if (MessageBox.Show("是否完成制作?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                                 {
                                     //地图数据处理
-                                    MapCode = MapCode.Remove(225, 4);
-                                    MapCode = MapCode.Insert(225, "Done");
+                                    MapCode = MapCode.Remove(450, 4);
+                                    MapCode = MapCode.Insert(450, "Done");
                                     //选择地面数据处理
                                     string ChooseSurface = chooseSurface;
                                     //数据库连接等操作
                                     try
                                     {
-                                        SqlConnection conn = new SqlConnection("Server=.;Database=c#Traning report;uid=sa;pwd=123456");
+                                        MySqlConnection conn = new MySqlConnection(sqltext);
                                         conn.Open();
-                                        SqlCommand comm = conn.CreateCommand();
-                                        comm.CommandText = "Update MapData.MapData_" + LoginName + " set MapData ='" + MapCode + "' where Name ='" + getMapName + "'";
+                                        MySqlCommand comm = conn.CreateCommand();
+                                        comm.CommandText = "Update UserMapData set map_data = '" + MapCode + "' where id = " + mapId;
+
+                                        //SqlConnection conn = new SqlConnection("Server=.;Database=c#Traning report;uid=sa;pwd=123456");
+                                        //conn.Open();
+                                        //SqlCommand comm = conn.CreateCommand();
+                                        //comm.CommandText = "Update MapData.MapData_" + LoginName + " set MapData ='" + MapCode + "' where Name ='" + getMapName + "'";
+                                        
                                         int check = comm.ExecuteNonQuery();
                                         if (check > 0)
                                             MessageBox.Show("已完成制作！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         conn.Close();
                                         DefaultMapModel();
+                                        comboBox2.Enabled = true;
                                         label8.Text = "当前地图名称:";
                                     }
                                     catch (Exception ex)
@@ -267,14 +298,14 @@ namespace PushBoxs
         //地面选择后加载数据
         private void Fmp_MouseDown(object sender, MouseEventArgs e)
         {
-            string pattern = "..\\..\\images\\Surface\\";
+            string pattern = ".\\images\\Surface\\";
             string get = ((PictureBox)sender).ImageLocation;
             chooseSurface = get.Replace(pattern, "");
             chooseSurface = chooseSurface.Replace(".png", "");
             this.Enabled = true;
 
             //加载箱子
-            string BoxPath = @"..\..\images\Box\";
+            string BoxPath = @".\images\Box\";
             DirectoryInfo GetBox = new DirectoryInfo(BoxPath);
             foreach (DirectoryInfo f in GetBox.GetDirectories())
             {
@@ -306,7 +337,7 @@ namespace PushBoxs
 
             //加载人物
             ImagesNumX = 0; ImagesNumY = 0;
-            string CharacterPath = @"..\..\images\Character\";
+            string CharacterPath = @".\images\Character\";
             DirectoryInfo GetCharacrer = new DirectoryInfo(CharacterPath);
             foreach (DirectoryInfo f in GetCharacrer.GetDirectories())
             {
@@ -346,7 +377,7 @@ namespace PushBoxs
 
             //加载墙
             ImagesNumX = 0; ImagesNumY = 0;
-            string WallPath = @"..\..\images\Wall\";
+            string WallPath = @".\images\Wall\";
             DirectoryInfo GetWall = new DirectoryInfo(WallPath);
             foreach (FileInfo f in GetWall.GetFiles())
             {
@@ -367,7 +398,7 @@ namespace PushBoxs
 
             //加载终点
             ImagesNumX = 0; ImagesNumY = 0;
-            string EndPath = @"..\..\images\End\";
+            string EndPath = @".\images\End\";
             DirectoryInfo GetEnd = new DirectoryInfo(EndPath);
             foreach (DirectoryInfo f in GetEnd.GetDirectories())
             {
@@ -512,10 +543,20 @@ namespace PushBoxs
             {
                 bool checkBlock = false;//检测地图是否箱子、终点、人物各一个。
                 if (Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*(E).*)+") || Regex.IsMatch(MapCode, "(?=.*[B-C].*)(?=.*[H-O].*)+"))
-                    checkBlock = true;
-                else
-                    MessageBox.Show("箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+                {
+                    int box_num = Regex.Matches(MapCode, "[B]+").Count;
+                    int end_num = Regex.Matches(MapCode, "[E]+").Count;
+                    if (box_num == end_num)
+                    {
+                        checkBlock = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("保存失败, 箱子和终点数量不对等", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                else if (((Button)sender).Text != "查看已做的地图")
+                    MessageBox.Show("保存失败, 箱子、终点、人物需各一个", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 if (checkBlock)
                 {
                     string check = label8.Text.Replace("当前地图名称:", "");
@@ -537,13 +578,20 @@ namespace PushBoxs
                         {
                             try
                             {
-                                SqlConnection conn = new SqlConnection("Server=.;DataBase=c#Traning report;uid=sa;pwd=123456");
+                                MySqlConnection conn = new MySqlConnection(sqltext);
                                 conn.Open();
-                                SqlCommand comm = conn.CreateCommand();
-                                comm.CommandText = "Update MapData.MapData_" + LoginName + "set MapData='" + MapCode + "' where Name=" + check;
+                                MySqlCommand comm = conn.CreateCommand();
+                                comm.CommandText = "Update UserMapData set map_data = '" + MapCode + "' where id = " + mapId;
+
+                                //SqlConnection conn = new SqlConnection("Server=.;DataBase=c#Traning report;uid=sa;pwd=123456");
+                                //conn.Open();
+                                //SqlCommand comm = conn.CreateCommand();
+                                //comm.CommandText = "Update MapData.MapData_" + LoginName + "set MapData='" + MapCode + "' where Name=" + check;
+
                                 int checks = comm.ExecuteNonQuery();
                                 if (checks > 0)
                                     MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK);
+                                Dispose();
                                 conn.Close();
                             }
                             catch (Exception ex)
@@ -553,6 +601,10 @@ namespace PushBoxs
                             Form1.enabled = true;
                             Form1.change();
                         }
+                    } else
+                    {
+                        Form1.enabled = true;
+                        Form1.change();
                     }
                     switch (e.CloseReason)
                     {
@@ -562,6 +614,8 @@ namespace PushBoxs
                     }
                     Enabled = false;
                 }
+                Form1.enabled = true;
+                Form1.change();
             }
             else
             {
@@ -717,35 +771,35 @@ namespace PushBoxs
                             {
                                 case "E1":
                                     Map[jX, jY] = "CH";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Beige.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Beige.png";
                                     break;
                                 case "E2":
                                     Map[jX, jY] = "CI";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Black.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Black.png";
                                     break;
                                 case "E3":
                                     Map[jX, jY] = "CJ";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Blue.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Blue.png";
                                     break;
                                 case "E4":
                                     Map[jX, jY] = "CK";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Brown.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Brown.png";
                                     break;
                                 case "E5":
                                     Map[jX, jY] = "CL";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Gray.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Gray.png";
                                     break;
                                 case "E6":
                                     Map[jX, jY] = "CM";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Purple.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Purple.png";
                                     break;
                                 case "E7":
                                     Map[jX, jY] = "CN";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Red.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Red.png";
                                     break;
                                 case "E8":
                                     Map[jX, jY] = "CO";
-                                    FileUrl = @"..\..\images\End\EndCharacter\EndCharacter-Yellow.png";
+                                    FileUrl = @".\images\End\EndCharacter\EndCharacter-Yellow.png";
                                     break;
                             }
                             comboBox2.Enabled = false;
@@ -1224,10 +1278,10 @@ namespace PushBoxs
             return "";
         }
 
-        //默认绘制地图模板
+        //委托-默认绘制地图模板
         public void DefaultMapModel()
         {
-            Console.WriteLine("Hello");
+
             Bitmap ty = new Bitmap(getUrl);
             for (int i = 0; i < 15; i++)
             {
@@ -1244,6 +1298,82 @@ namespace PushBoxs
         //委托-画已做的地图
         public void DrawDMap()
         {
+            panel1.Controls.Clear();
+            ImagesNumX = 0; ImagesNumY = 0;
+            //加载箱子
+            string BoxPath = @".\images\Box\";
+            DirectoryInfo GetBox = new DirectoryInfo(BoxPath);
+            foreach (DirectoryInfo f in GetBox.GetDirectories())
+            {
+                string DirectoryName = f.Name;
+                string PathSon = BoxPath + DirectoryName;
+                DirectoryInfo GetFile = new DirectoryInfo(PathSon);
+                foreach (FileInfo fi in GetFile.GetFiles())
+                {
+                    string FileName = fi.Name;
+                    string PathSonFile = PathSon + "\\" + FileName;
+                    if (!Regex.IsMatch(PathSonFile, "[2]+") && Regex.IsMatch(PathSonFile, "(" + MapSurface + ")+"))
+                    {
+                        p = new PictureBox();
+                        p.ImageLocation = PathSonFile;
+                        p.SizeMode = PictureBoxSizeMode.StretchImage;
+                        p.SetBounds(ImagesNumX * 25, ImagesNumY * 25, 25, 25);
+                        p.MouseDown += P_MouseDown;
+                        panel1.Controls.Add(p);
+                        ImagesNumX += 1;
+                        if (ImagesNumX == 5)
+                        {
+                            ImagesNumX = 0;
+                            ImagesNumY += 1;
+                        }
+                    }
+
+                }
+            }
+
+            //加载终点
+            ImagesNumX = 0; ImagesNumY = 0;
+            panel5.Controls.Clear();
+            string EndPath = @".\images\End\";
+            DirectoryInfo GetEnd = new DirectoryInfo(EndPath);
+            foreach (DirectoryInfo f in GetEnd.GetDirectories())
+            {
+                string DirectoryName = f.Name;
+                string PathSon = EndPath + DirectoryName;
+                DirectoryInfo GetFile = new DirectoryInfo(PathSon);
+                foreach (FileInfo fi in GetFile.GetFiles())
+                {
+                    string FileName = fi.Name;
+                    string PathSonFile = PathSon + "\\" + FileName;
+                    if (!Regex.IsMatch(PathSonFile, "[2]+") && Regex.IsMatch(PathSonFile, "(" + MapSurface + ")+"))
+                    {
+                        p = new PictureBox();
+                        p.ImageLocation = PathSonFile;
+                        p.SizeMode = PictureBoxSizeMode.StretchImage;
+                        p.SetBounds(ImagesNumX * 25, ImagesNumY * 25, 25, 25);
+                        p.MouseDown += P_MouseDown;
+                        panel5.Controls.Add(p);
+                        ImagesNumX += 1;
+                        if (ImagesNumX == 5)
+                        {
+                            ImagesNumX = 0;
+                            ImagesNumY += 1;
+                        }
+                    }
+                }
+            }
+
+            //加载表面
+            panel4.Controls.Clear();
+            ImagesNumX = 0; ImagesNumY = 0;
+            p = new PictureBox();
+            p.ImageLocation = ".\\images\\Surface\\" + MapSurface + ".png";
+            p.SizeMode = PictureBoxSizeMode.StretchImage;
+            p.SetBounds(ImagesNumX * 25, ImagesNumY * 25, 25, 25);
+            p.MouseDown += P_MouseDown;
+            panel4.Controls.Add(p);
+
+            comboBox2.Enabled = false;
             string mapcode = "";
             for (int i = 0; i < 15; i++)
             {
@@ -1252,181 +1382,182 @@ namespace PushBoxs
                     switch (Map[i, j])
                     {
                         case "S1":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceOne.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceOne.png");
                             break;
                         case "S2":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceOne.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceOne.png");
                             break;
                         case "S3":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceTwo.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceTwo.png");
                             break;
                         case "S4":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceThree.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceThree.png");
                             break;
                         case "S5":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceFour.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceFour.png");
                             break;
                         case "S6":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceFive.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceFive.png");
                             break;
                         case "S7":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceSix.png");
+                            Console.WriteLine("111");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceSix.png");
                             break;
                         case "S8":
-                            bitmap = new Bitmap(@"..\..\images\Surface\SurfaceSeven.png");
+                            bitmap = new Bitmap(@".\images\Surface\SurfaceSeven.png");
                             break;
                         case "B1":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-1.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-1.png");
                             break;
                         case "B2":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-1.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-1.png");
                             break;
                         case "B3":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-1.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-1.png");
                             break;
                         case "H4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "I4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "J4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "K4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "L4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "M4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "N4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "O4":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxOne\" + MapSurface + "-BoxOne-2.png");
                             break;
                         case "H5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "I5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "J5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "K5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "L5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "M5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "N5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "O5":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxTwo\" + MapSurface + "-BoxTwo-2.png");
                             break;
                         case "H6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "I6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "J6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "K6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "L6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "M6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "N6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "O6":
-                            bitmap = new Bitmap(@"..\..\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
+                            bitmap = new Bitmap(@".\images\Box\BoxThree\" + MapSurface + "-BoxThree-2.png");
                             break;
                         case "E1":
-                            bitmap = new Bitmap(@"..\..\images\End\EndBeige\" + MapSurface + "-EndBeige.png");
+                            bitmap = new Bitmap(@".\images\End\EndBeige\" + MapSurface + "-EndBeige.png");
                             break;
                         case "E2":
-                            bitmap = new Bitmap(@"..\..\images\End\EndBlack\" + MapSurface + "-EndBlack.png");
+                            bitmap = new Bitmap(@".\images\End\EndBlack\" + MapSurface + "-EndBlack.png");
                             break;
                         case "E3":
-                            bitmap = new Bitmap(@"..\..\images\End\EndBlue\" + MapSurface + "-EndBlue.png");
+                            bitmap = new Bitmap(@".\images\End\EndBlue\" + MapSurface + "-EndBlue.png");
                             break;
                         case "E4":
-                            bitmap = new Bitmap(@"..\..\images\End\EndBrown\" + MapSurface + "-EndBrown.png");
+                            bitmap = new Bitmap(@".\images\End\EndBrown\" + MapSurface + "-EndBrown.png");
                             break;
                         case "E5":
-                            bitmap = new Bitmap(@"..\..\images\End\EndGray\" + MapSurface + "-EndGray.png");
+                            bitmap = new Bitmap(@".\images\End\EndGray\" + MapSurface + "-EndGray.png");
                             break;
                         case "E6":
-                            bitmap = new Bitmap(@"..\..\images\End\EndPurple\" + MapSurface + "-EndPurple.png");
+                            bitmap = new Bitmap(@".\images\End\EndPurple\" + MapSurface + "-EndPurple.png");
                             break;
                         case "E7":
-                            bitmap = new Bitmap(@"..\..\images\End\EndRed\" + MapSurface + "-EndRed.png");
+                            bitmap = new Bitmap(@".\images\End\EndRed\" + MapSurface + "-EndRed.png");
                             break;
                         case "E8":
-                            bitmap = new Bitmap(@"..\..\images\End\EndYellow\" + MapSurface + "-EndYellow.png");
+                            bitmap = new Bitmap(@".\images\End\EndYellow\" + MapSurface + "-EndYellow.png");
                             break;
                         case "C1":
-                            bitmap = new Bitmap(@"..\..\images\Character\Up\" + MapSurface + "-Up.gif");
+                            bitmap = new Bitmap(@".\images\Character\Up\" + MapSurface + "-Up.gif");
                             break;
                         case "C2":
-                            bitmap = new Bitmap(@"..\..\images\Character\Down\" + MapSurface + "-Down.gif");
+                            bitmap = new Bitmap(@".\images\Character\Down\" + MapSurface + "-Down.gif");
                             break;
                         case "C3":
-                            bitmap = new Bitmap(@"..\..\images\Character\Left\" + MapSurface + "-Left.gif");
+                            bitmap = new Bitmap(@".\images\Character\Left\" + MapSurface + "-Left.gif");
                             break;
                         case "C4":
-                            bitmap = new Bitmap(@"..\..\images\Character\Right\" + MapSurface + "-Right.gif");
+                            bitmap = new Bitmap(@".\images\Character\Right\" + MapSurface + "-Right.gif");
                             break;
                         case "CH":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Beige.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Beige.png");
                             break;
                         case "CI":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Black.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Black.png");
                             break;
                         case "CJ":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Blue.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Blue.png");
                             break;
                         case "CK":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Brown.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Brown.png");
                             break;
                         case "CL":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Gray.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Gray.png");
                             break;
                         case "CM":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Purple.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Purple.png");
                             break;
                         case "CN":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Red.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Red.png");
                             break;
                         case "CO":
-                            bitmap = new Bitmap(@"..\..\images\Character\EndCharacter\EndCharacter-Yellow.png");
+                            bitmap = new Bitmap(@".\images\Character\EndCharacter\EndCharacter-Yellow.png");
                             break;
                         case "W1":
-                            bitmap = new Bitmap(@"..\..\images\Wall\WallOne.png");
+                            bitmap = new Bitmap(@".\images\Wall\WallOne.png");
                             break;
                         case "W2":
-                            bitmap = new Bitmap(@"..\..\images\Wall\WallTwo.png");
+                            bitmap = new Bitmap(@".\images\Wall\WallTwo.png");
                             break;
                         case "W3":
-                            bitmap = new Bitmap(@"..\..\images\Wall\WallThree.png");
+                            bitmap = new Bitmap(@".\images\Wall\WallThree.png");
                             break;
                         case "W4":
-                            bitmap = new Bitmap(@"..\..\images\Wall\WallFour.png");
+                            bitmap = new Bitmap(@".\images\Wall\WallFour.png");
                             break;
                     }
                     mapcode += Map[i, j];
@@ -1457,6 +1588,12 @@ namespace PushBoxs
             methodinfo.Invoke(c, BindingFlags.NonPublic
                 | BindingFlags.Instance | BindingFlags.InvokeMethod, null, new object[]
                 {ControlStyles.Selectable,false}, Application.CurrentCulture);
+        }
+
+        //委托-改变combox2是否enabled
+        private void changeComboBox2Enabled()
+        {
+            comboBox2.Enabled = comboBox2IsEnabled;
         }
     }
 }
